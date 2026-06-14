@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 const platforms = [
   "Instagram",
@@ -129,6 +130,7 @@ function Field({
 
 export default function GeneratePage() {
   const [form, setForm] = useState<FormState>(initialForm);
+  const router = useRouter();
 
   const rates = useMemo(
     () =>
@@ -143,6 +145,16 @@ export default function GeneratePage() {
 
   function updateField(name: keyof FormState, value: string) {
     setForm((current) => ({ ...current, [name]: value }));
+  }
+
+  function openPreview() {
+    const params = new URLSearchParams();
+
+    Object.entries(form).forEach(([key, value]) => {
+      params.set(key, value);
+    });
+
+    router.push(`/preview?${params.toString()}`);
   }
 
   return (
@@ -263,6 +275,14 @@ export default function GeneratePage() {
               />
             </div>
           </form>
+
+          <button
+            type="button"
+            onClick={openPreview}
+            className="mt-8 w-full bg-stone-100 px-6 py-3 text-sm font-semibold text-black transition-colors hover:bg-amber-200"
+          >
+            Generate preview
+          </button>
 
           <p className="mt-8 border-t border-zinc-800 pt-6 text-xs leading-5 text-zinc-600">
             Estimates are a starting point based on audience size, average
