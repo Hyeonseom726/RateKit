@@ -38,6 +38,17 @@ function SectionLabel({
   );
 }
 
+function SamplePackage({ name, price }: { name: string; price: string }) {
+  return (
+    <div className="grid min-w-0 grid-cols-[minmax(0,1fr)_minmax(0,7rem)] items-end gap-4 border-b border-zinc-300 py-4 last:border-b-0">
+      <p className="min-w-0 font-semibold">{name}</p>
+      <p className="min-w-0 [overflow-wrap:anywhere] text-right font-mono text-sm font-semibold">
+        {price}
+      </p>
+    </div>
+  );
+}
+
 export default function Home() {
   return (
     <main className="min-h-screen bg-black text-zinc-100">
@@ -46,16 +57,16 @@ export default function Home() {
           <a href="#" className="text-lg font-semibold tracking-tight text-stone-100">
             RateKit
           </a>
-          <div className="flex items-center gap-5">
+          <div className="flex items-center gap-3 sm:gap-5">
             <a
               href="#how-it-works"
-              className="hidden text-sm text-zinc-500 transition-colors hover:text-zinc-200 sm:block"
+              className="py-2 text-sm text-zinc-500 transition-colors hover:text-zinc-200"
             >
               How it works
             </a>
             <a
               href="#pricing"
-              className="border border-zinc-700 px-4 py-2 text-sm font-medium text-stone-200 transition-colors hover:border-zinc-500 hover:bg-zinc-900"
+              className="py-2 text-sm text-zinc-500 transition-colors hover:text-zinc-200"
             >
               View pricing
             </a>
@@ -87,59 +98,80 @@ export default function Home() {
         </div>
 
         <div className="flex items-center justify-center bg-zinc-950 px-5 py-16 sm:px-8 lg:px-12">
-          <div className="w-full max-w-md border border-stone-300 bg-stone-100 p-6 text-zinc-950 shadow-[8px_8px_0_0_#27272a] sm:p-8">
-            <div className="flex items-start justify-between border-b border-zinc-300 pb-6">
-              <div>
-                <p className="text-xs font-semibold uppercase tracking-[0.18em] text-zinc-500">
-                  Creator rate card
-                </p>
-                <h2 className="mt-3 text-2xl font-semibold tracking-tight">
-                  Jamie Park
-                </h2>
-                <p className="mt-1 text-sm text-zinc-500">
+          <div className="relative w-full max-w-md overflow-hidden border border-stone-300 bg-stone-100 text-zinc-950 shadow-[8px_8px_0_0_#27272a]">
+            <div className="pointer-events-none absolute inset-0 z-0 flex items-center justify-center overflow-hidden">
+              <span className="-rotate-[28deg] whitespace-nowrap text-2xl font-semibold tracking-[0.18em] text-zinc-500/20 sm:text-3xl">
+                PREVIEW · RATEKIT
+              </span>
+            </div>
+
+            <div className="relative z-10 min-w-0 border-b border-zinc-300 p-6 sm:p-8">
+              <p className="text-xs font-semibold uppercase tracking-[0.18em] text-zinc-500">
+                Sponsorship rate card
+              </p>
+              <h2 className="mt-4 [overflow-wrap:anywhere] text-2xl font-semibold tracking-tight">
+                Jamie Park
+              </h2>
+              <p className="mt-1 [overflow-wrap:anywhere] text-sm text-zinc-500">
+                @jamiecreates
+              </p>
+              <div className="mt-6 flex flex-wrap gap-x-4 gap-y-2 border-t border-zinc-300 pt-4 text-[10px] font-semibold uppercase tracking-[0.14em] text-zinc-500">
+                <span>Instagram</span>
+                <span className="text-zinc-300">/</span>
+                <span className="min-w-0 [overflow-wrap:anywhere]">
                   Food, culture &amp; city guides
+                </span>
+              </div>
+            </div>
+
+            <div className="relative z-10 grid grid-cols-3 border-b border-zinc-300">
+              <div className="min-w-0 border-r border-zinc-300 p-4">
+                <p className="text-[9px] font-semibold uppercase tracking-wider text-zinc-500">
+                  Followers
+                </p>
+                <p className="mt-2 [overflow-wrap:anywhere] font-mono text-sm font-semibold">
+                  48,000
                 </p>
               </div>
-              <div className="h-9 w-9 border border-zinc-400 bg-amber-200" />
-            </div>
-            <div className="py-6">
-              <div className="flex items-end justify-between border-b border-zinc-300 pb-4">
-                <div>
-                  <p className="text-xs font-semibold uppercase tracking-wider text-zinc-500">
-                    Short-form video
-                  </p>
-                  <p className="mt-2 text-sm text-zinc-600">
-                    Concept, production, 30-day usage
-                  </p>
-                </div>
-                <p className="font-mono text-lg font-semibold">$850</p>
+              <div className="min-w-0 border-r border-zinc-300 p-4">
+                <p className="text-[9px] font-semibold uppercase tracking-wider text-zinc-500">
+                  Avg. views
+                </p>
+                <p className="mt-2 [overflow-wrap:anywhere] font-mono text-sm font-semibold">
+                  18,500
+                </p>
               </div>
-              <div className="flex items-end justify-between border-b border-zinc-300 py-4">
-                <div>
-                  <p className="text-xs font-semibold uppercase tracking-wider text-zinc-500">
-                    Brand package
-                  </p>
-                  <p className="mt-2 text-sm text-zinc-600">
-                    1 video, 3 stories, link placement
-                  </p>
-                </div>
-                <p className="font-mono text-lg font-semibold">$1,400</p>
-              </div>
-              <div className="flex items-end justify-between pt-4">
-                <div>
-                  <p className="text-xs font-semibold uppercase tracking-wider text-zinc-500">
-                    Monthly partner
-                  </p>
-                  <p className="mt-2 text-sm text-zinc-600">
-                    Custom recurring collaboration
-                  </p>
-                </div>
-                <p className="font-mono text-lg font-semibold">Let&apos;s talk</p>
+              <div className="min-w-0 p-4">
+                <p className="text-[9px] font-semibold uppercase tracking-wider text-zinc-500">
+                  Engagement
+                </p>
+                <p className="mt-2 [overflow-wrap:anywhere] font-mono text-sm font-semibold">
+                  4.2%
+                </p>
               </div>
             </div>
-            <div className="flex items-center justify-between border-t border-zinc-300 pt-5 text-xs text-zinc-500">
-              <span>Valid for 30 days</span>
-              <span className="font-semibold text-zinc-900">hello@jamie.co</span>
+
+            <div className="relative z-10 p-6 sm:p-8">
+              <p className="text-xs font-semibold uppercase tracking-[0.18em] text-zinc-500">
+                Sponsorship packages
+              </p>
+              <div className="mt-4 border-t border-zinc-300">
+                <SamplePackage name="Starter" price="$594" />
+                <SamplePackage name="Standard" price="$849" />
+                <SamplePackage name="Premium" price="$1,528" />
+              </div>
+            </div>
+
+            <div className="relative z-10 border-t border-zinc-300 px-6 py-5 text-xs text-zinc-500 sm:px-8">
+              <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+                <span>Valid for 30 days</span>
+                <span className="min-w-0 [overflow-wrap:anywhere] font-semibold text-zinc-900">
+                  hello@jamie.com
+                </span>
+              </div>
+              <p className="mt-4 border-t border-zinc-300 pt-4 text-center font-semibold uppercase tracking-[0.16em] text-zinc-400">
+                Made with RateKit
+              </p>
             </div>
           </div>
         </div>
