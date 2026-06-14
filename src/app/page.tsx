@@ -77,7 +77,7 @@ export default function Home() {
           </p>
           <div className="mt-10 flex flex-col items-start gap-4 sm:flex-row sm:items-center">
             <a
-              href="#pricing"
+              href="/generate"
               className="bg-stone-100 px-6 py-3 text-sm font-semibold text-black transition-colors hover:bg-amber-200"
             >
               Create my rate card
@@ -265,7 +265,7 @@ export default function Home() {
             </h2>
           </div>
           <a
-            href="#pricing"
+            href="/generate"
             className="shrink-0 bg-stone-100 px-6 py-3 text-sm font-semibold text-black transition-colors hover:bg-amber-200"
           >
             Create my rate card
