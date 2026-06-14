@@ -1,8 +1,8 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { Suspense, useMemo, useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 
 const platforms = [
   "Instagram",
@@ -44,6 +44,62 @@ const initialForm: FormState = {
   contactEmail: "hello@jamie.com",
 };
 
+function sanitizeIntegerInput(value: string) {
+  return value.includes("-") ? "" : value.replace(/\D/g, "");
+}
+
+function sanitizeDecimalInput(value: string) {
+  if (value.includes("-")) {
+    return "";
+  }
+
+  const [whole = "", ...decimals] = value.replace(/[^\d.]/g, "").split(".");
+
+  return decimals.length > 0 ? `${whole}.${decimals.join("")}` : whole;
+}
+
+function parseNonNegativeNumber(value: string) {
+  const number = Number(value);
+
+  return Number.isFinite(number) && number >= 0 ? number : 0;
+}
+
+function getPlatform(value: string | null): Platform {
+  return platforms.includes(value as Platform)
+    ? (value as Platform)
+    : initialForm.platform;
+}
+
+function buildRateCardParams(form: FormState) {
+  const params = new URLSearchParams();
+
+  Object.entries(form).forEach(([key, value]) => {
+    params.set(key, value);
+  });
+
+  return params;
+}
+
+function getInitialForm(searchParams: { get: (name: string) => string | null }) {
+  return {
+    creatorName: searchParams.get("creatorName") ?? initialForm.creatorName,
+    creatorHandle:
+      searchParams.get("creatorHandle") ?? initialForm.creatorHandle,
+    niche: searchParams.get("niche") ?? initialForm.niche,
+    platform: getPlatform(searchParams.get("platform")),
+    followers: sanitizeIntegerInput(
+      searchParams.get("followers") ?? initialForm.followers,
+    ),
+    avgViews: sanitizeIntegerInput(
+      searchParams.get("avgViews") ?? initialForm.avgViews,
+    ),
+    engagementRate: sanitizeDecimalInput(
+      searchParams.get("engagementRate") ?? initialForm.engagementRate,
+    ),
+    contactEmail: searchParams.get("contactEmail") ?? initialForm.contactEmail,
+  };
+}
+
 function estimateRates(
   platform: Platform,
   followers: number,
@@ -66,9 +122,7 @@ function estimateRates(
 }
 
 function formatNumber(value: string) {
-  const number = Number(value);
-
-  return Number.isFinite(number) ? number.toLocaleString("en-US") : "0";
+  return parseNonNegativeNumber(value).toLocaleString("en-US");
 }
 
 function formatPrice(value: number) {
@@ -110,12 +164,26 @@ function Field({
       <span className="flex border border-zinc-800 bg-zinc-950 focus-within:border-zinc-600">
         <input
           name={name}
-          type={type}
+          type={type === "number" ? "text" : type}
+          inputMode={
+            name === "engagementRate"
+              ? "decimal"
+              : type === "number"
+                ? "numeric"
+                : undefined
+          }
           value={value}
-          min={type === "number" ? "0" : undefined}
-          step={name === "engagementRate" ? "0.1" : undefined}
           placeholder={placeholder}
           onChange={(event) => onChange(name, event.target.value)}
+          onKeyDown={
+            type === "number"
+              ? (event) => {
+                  if (["-", "+", "e", "E"].includes(event.key)) {
+                    event.preventDefault();
+                  }
+                }
+              : undefined
+          }
           className="min-w-0 flex-1 bg-transparent px-4 py-3 text-sm text-stone-100 outline-none placeholder:text-zinc-700"
         />
         {suffix ? (
@@ -129,32 +197,44 @@ function Field({
 }
 
 export default function GeneratePage() {
-  const [form, setForm] = useState<FormState>(initialForm);
+  return (
+    <Suspense fallback={<main className="min-h-screen bg-black" />}>
+      <GeneratePageContent />
+    </Suspense>
+  );
+}
+
+function GeneratePageContent() {
+  const searchParams = useSearchParams();
+  const [form, setForm] = useState<FormState>(() =>
+    getInitialForm(searchParams),
+  );
   const router = useRouter();
 
   const rates = useMemo(
     () =>
       estimateRates(
         form.platform,
-        Number(form.followers) || 0,
-        Number(form.avgViews) || 0,
-        Number(form.engagementRate) || 0,
+        parseNonNegativeNumber(form.followers),
+        parseNonNegativeNumber(form.avgViews),
+        parseNonNegativeNumber(form.engagementRate),
       ),
     [form.platform, form.followers, form.avgViews, form.engagementRate],
   );
 
   function updateField(name: keyof FormState, value: string) {
-    setForm((current) => ({ ...current, [name]: value }));
+    const nextValue =
+      name === "followers" || name === "avgViews"
+        ? sanitizeIntegerInput(value)
+        : name === "engagementRate"
+          ? sanitizeDecimalInput(value)
+          : value;
+
+    setForm((current) => ({ ...current, [name]: nextValue }));
   }
 
   function openPreview() {
-    const params = new URLSearchParams();
-
-    Object.entries(form).forEach(([key, value]) => {
-      params.set(key, value);
-    });
-
-    router.push(`/preview?${params.toString()}`);
+    router.push(`/preview?${buildRateCardParams(form).toString()}`);
   }
 
   return (

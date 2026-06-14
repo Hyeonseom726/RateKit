@@ -49,10 +49,14 @@ function getPlatform(value: string): Platform {
     : defaults.platform;
 }
 
-function getNumber(value: string) {
+function parseNonNegativeNumber(value: string) {
   const number = Number(value);
 
-  return Number.isFinite(number) ? number : 0;
+  return Number.isFinite(number) && number >= 0 ? number : 0;
+}
+
+function buildRateCardParams(values: Record<string, string>) {
+  return new URLSearchParams(values);
 }
 
 function estimateRates(
@@ -77,7 +81,7 @@ function estimateRates(
 }
 
 function formatNumber(value: string) {
-  return getNumber(value).toLocaleString("en-US");
+  return parseNonNegativeNumber(value).toLocaleString("en-US");
 }
 
 function formatPrice(value: number) {
@@ -124,17 +128,27 @@ export default async function PreviewPage({
   );
   const rates = estimateRates(
     platform,
-    getNumber(followers),
-    getNumber(avgViews),
-    getNumber(engagementRate),
+    parseNonNegativeNumber(followers),
+    parseNonNegativeNumber(avgViews),
+    parseNonNegativeNumber(engagementRate),
   );
+  const editParams = buildRateCardParams({
+    creatorName,
+    creatorHandle,
+    niche,
+    platform,
+    followers: String(parseNonNegativeNumber(followers)),
+    avgViews: String(parseNonNegativeNumber(avgViews)),
+    engagementRate: String(parseNonNegativeNumber(engagementRate)),
+    contactEmail,
+  });
 
   return (
     <main className="min-h-screen bg-black px-5 py-8 text-zinc-100 sm:px-8 sm:py-12">
       <div className="mx-auto w-full max-w-2xl">
         <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <Link
-            href="/generate"
+            href={`/generate?${editParams.toString()}`}
             className="text-sm text-zinc-500 transition-colors hover:text-stone-200"
           >
             ← Edit rate card
@@ -175,7 +189,7 @@ export default async function PreviewPage({
             <Stat label="Avg. views" value={formatNumber(avgViews)} />
             <Stat
               label="Engagement"
-              value={`${getNumber(engagementRate)}%`}
+              value={`${parseNonNegativeNumber(engagementRate)}%`}
               last
             />
           </div>
