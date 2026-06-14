@@ -40,7 +40,7 @@ const initialForm: FormState = {
   followers: "48000",
   avgViews: "18500",
   engagementRate: "4.2",
-  contactEmail: "hello@jamie.co",
+  contactEmail: "hello@jamie.com",
 };
 
 function estimateRates(
@@ -72,6 +72,16 @@ function formatNumber(value: string) {
 
 function formatPrice(value: number) {
   return `$${value.toLocaleString("en-US")}`;
+}
+
+function formatHandle(value: string) {
+  const handle = value.trim();
+
+  if (!handle) {
+    return "@creator";
+  }
+
+  return handle.startsWith("@") ? handle : `@${handle}`;
 }
 
 function Field({
@@ -269,57 +279,60 @@ export default function GeneratePage() {
             <p className="font-mono text-xs text-zinc-700">ESTIMATE / USD</p>
           </div>
 
-          <article className="mx-auto w-full max-w-2xl border border-stone-300 bg-stone-100 text-zinc-950 shadow-[10px_10px_0_0_#27272a]">
-            <div className="border-b border-zinc-300 p-6 sm:p-9">
-              <div className="flex items-start justify-between gap-6">
-                <div>
-                  <p className="text-xs font-semibold uppercase tracking-[0.18em] text-zinc-500">
-                    Sponsorship rate card
-                  </p>
-                  <h2 className="mt-5 text-3xl font-semibold tracking-[-0.03em] sm:text-4xl">
-                    {form.creatorName || "Creator name"}
-                  </h2>
-                  <p className="mt-2 text-sm text-zinc-500">
-                    {form.creatorHandle || "@creator"}
-                  </p>
-                </div>
-                <div className="h-10 w-10 shrink-0 border border-zinc-400 bg-amber-200" />
-              </div>
+          <article className="relative mx-auto w-full max-w-2xl overflow-hidden border border-stone-300 bg-stone-100 text-zinc-950 shadow-[10px_10px_0_0_#27272a]">
+            <div className="pointer-events-none absolute inset-0 z-0 flex items-center justify-center overflow-hidden">
+              <span className="-rotate-[28deg] whitespace-nowrap text-3xl font-semibold tracking-[0.22em] text-zinc-500/20 sm:text-4xl">
+                PREVIEW · RATEKIT
+              </span>
+            </div>
+
+            <div className="relative z-10 min-w-0 border-b border-zinc-300 p-6 sm:p-9">
+              <p className="text-xs font-semibold uppercase tracking-[0.18em] text-zinc-500">
+                Sponsorship rate card
+              </p>
+              <h2 className="mt-5 [overflow-wrap:anywhere] text-3xl font-semibold tracking-[-0.03em] sm:text-4xl">
+                {form.creatorName || "Creator name"}
+              </h2>
+              <p className="mt-2 [overflow-wrap:anywhere] text-sm text-zinc-500">
+                {formatHandle(form.creatorHandle)}
+              </p>
               <div className="mt-8 flex flex-wrap gap-x-5 gap-y-2 border-t border-zinc-300 pt-5 text-xs font-semibold uppercase tracking-[0.14em] text-zinc-500">
                 <span>{form.platform}</span>
                 <span className="text-zinc-300">/</span>
-                <span>{form.niche || "Creator niche"}</span>
+                <span className="min-w-0 [overflow-wrap:anywhere]">
+                  {form.niche || "Creator niche"}
+                </span>
               </div>
             </div>
 
-            <div className="grid grid-cols-3 border-b border-zinc-300">
-              <div className="border-r border-zinc-300 p-4 sm:p-6">
+            <div className="relative z-10 grid grid-cols-3 border-b border-zinc-300">
+              <div className="min-w-0 border-r border-zinc-300 p-4 sm:p-6">
                 <p className="text-[10px] font-semibold uppercase tracking-wider text-zinc-500">
                   Followers
                 </p>
-                <p className="mt-2 font-mono text-base font-semibold sm:text-lg">
+                <p className="mt-2 [overflow-wrap:anywhere] font-mono text-base font-semibold sm:text-lg">
                   {formatNumber(form.followers)}
                 </p>
               </div>
-              <div className="border-r border-zinc-300 p-4 sm:p-6">
+              <div className="min-w-0 border-r border-zinc-300 p-4 sm:p-6">
                 <p className="text-[10px] font-semibold uppercase tracking-wider text-zinc-500">
                   Avg. views
                 </p>
-                <p className="mt-2 font-mono text-base font-semibold sm:text-lg">
+                <p className="mt-2 [overflow-wrap:anywhere] font-mono text-base font-semibold sm:text-lg">
                   {formatNumber(form.avgViews)}
                 </p>
               </div>
-              <div className="p-4 sm:p-6">
+              <div className="min-w-0 p-4 sm:p-6">
                 <p className="text-[10px] font-semibold uppercase tracking-wider text-zinc-500">
                   Engagement
                 </p>
-                <p className="mt-2 font-mono text-base font-semibold sm:text-lg">
+                <p className="mt-2 [overflow-wrap:anywhere] font-mono text-base font-semibold sm:text-lg">
                   {form.engagementRate || "0"}%
                 </p>
               </div>
             </div>
 
-            <div className="p-6 sm:p-9">
+            <div className="relative z-10 p-6 sm:p-9">
               <p className="text-xs font-semibold uppercase tracking-[0.18em] text-zinc-500">
                 Sponsorship packages
               </p>
@@ -342,11 +355,16 @@ export default function GeneratePage() {
               </div>
             </div>
 
-            <div className="flex flex-col gap-2 border-t border-zinc-300 px-6 py-5 text-xs text-zinc-500 sm:flex-row sm:items-center sm:justify-between sm:px-9">
-              <span>Valid for 30 days</span>
-              <span className="font-semibold text-zinc-900">
-                {form.contactEmail || "contact@example.com"}
-              </span>
+            <div className="relative z-10 border-t border-zinc-300 px-6 py-5 text-xs text-zinc-500 sm:px-9">
+              <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+                <span>Valid for 30 days</span>
+                <span className="min-w-0 [overflow-wrap:anywhere] font-semibold text-zinc-900">
+                  {form.contactEmail || "contact@example.com"}
+                </span>
+              </div>
+              <p className="mt-4 border-t border-zinc-300 pt-4 text-center font-semibold uppercase tracking-[0.16em] text-zinc-400">
+                Made with RateKit
+              </p>
             </div>
           </article>
         </section>
@@ -365,12 +383,12 @@ function PackageRow({
   price: number;
 }) {
   return (
-    <div className="flex items-end justify-between gap-6 border-b border-zinc-300 py-5 last:border-b-0">
-      <div>
+    <div className="grid min-w-0 gap-3 border-b border-zinc-300 py-5 last:border-b-0 sm:grid-cols-[minmax(0,1fr)_minmax(0,12rem)] sm:items-end sm:gap-6">
+      <div className="min-w-0">
         <h3 className="font-semibold">{name}</h3>
         <p className="mt-1 text-sm text-zinc-500">{description}</p>
       </div>
-      <p className="shrink-0 font-mono text-lg font-semibold">
+      <p className="min-w-0 [overflow-wrap:anywhere] font-mono text-lg font-semibold sm:text-right">
         {formatPrice(price)}
       </p>
     </div>
