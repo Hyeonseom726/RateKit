@@ -1,4 +1,8 @@
+"use client";
+
+import { Suspense, useState } from "react";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 
 const platforms = [
   "Instagram",
@@ -9,10 +13,6 @@ const platforms = [
 ] as const;
 
 type Platform = (typeof platforms)[number];
-
-type SearchParams = Promise<
-  Record<string, string | string[] | undefined>
->;
 
 const platformMultipliers: Record<Platform, number> = {
   Instagram: 1,
@@ -34,13 +34,11 @@ const defaults = {
 };
 
 function getParam(
-  params: Awaited<SearchParams>,
+  params: { get: (name: string) => string | null },
   name: string,
   fallback: string,
 ) {
-  const value = params[name];
-
-  return typeof value === "string" ? value : fallback;
+  return params.get(name) ?? fallback;
 }
 
 function getPlatform(value: string): Platform {
@@ -98,12 +96,17 @@ function formatHandle(value: string) {
   return handle.startsWith("@") ? handle : `@${handle}`;
 }
 
-export default async function PreviewPage({
-  searchParams,
-}: {
-  searchParams: SearchParams;
-}) {
-  const params = await searchParams;
+export default function PreviewPage() {
+  return (
+    <Suspense fallback={<main className="min-h-screen bg-black" />}>
+      <PreviewPageContent />
+    </Suspense>
+  );
+}
+
+function PreviewPageContent() {
+  const params = useSearchParams();
+  const [copied, setCopied] = useState(false);
   const creatorName = getParam(params, "creatorName", defaults.creatorName);
   const creatorHandle = getParam(
     params,
@@ -143,16 +146,39 @@ export default async function PreviewPage({
     contactEmail,
   });
 
+  async function copyPreviewLink() {
+    if (!navigator.clipboard) {
+      return;
+    }
+
+    try {
+      await navigator.clipboard.writeText(window.location.href);
+      setCopied(true);
+      window.setTimeout(() => setCopied(false), 2000);
+    } catch {
+      // Clipboard access can be blocked by browser permissions.
+    }
+  }
+
   return (
     <main className="min-h-screen bg-black px-5 py-8 text-zinc-100 sm:px-8 sm:py-12">
       <div className="mx-auto w-full max-w-2xl">
-        <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-          <Link
-            href={`/generate?${editParams.toString()}`}
-            className="text-sm text-zinc-500 transition-colors hover:text-stone-200"
-          >
-            ← Edit rate card
-          </Link>
+        <div className="mb-6 flex flex-col gap-4">
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <Link
+              href={`/generate?${editParams.toString()}`}
+              className="text-sm text-zinc-500 transition-colors hover:text-stone-200"
+            >
+              ← Edit rate card
+            </Link>
+            <button
+              type="button"
+              onClick={copyPreviewLink}
+              className="border border-zinc-700 px-4 py-2 text-sm font-medium text-stone-200 transition-colors hover:border-zinc-500 hover:bg-zinc-900"
+            >
+              {copied ? "Copied" : "Copy preview link"}
+            </button>
+          </div>
           <p className="text-xs text-zinc-600">
             Free preview. Watermark-free export coming soon.
           </p>
