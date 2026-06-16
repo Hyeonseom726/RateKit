@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 178 48" fill="none">
+  <rect width="48" height="48" rx="11" fill="#18181B"/>
+  <rect x="13" y="8" width="27" height="30" rx="4" fill="#71717A"/>
+  <rect x="8" y="12" width="29" height="30" rx="4" fill="#F5F5F4"/>
+  <rect x="13" y="17" width="8" height="6" rx="1.5" fill="#18181B"/>
+  <rect x="24" y="17" width="9" height="2.5" rx="1.25" fill="#71717A"/>
+  <rect x="24" y="21" width="6" height="2.5" rx="1.25" fill="#A1A1AA"/>
+  <rect x="13" y="28" width="20" height="3" rx="1.5" fill="#27272A"/>
+  <rect x="13" y="34" width="12" height="3" rx="1.5" fill="#A1A1AA"/>
+  <rect x="28" y="34" width="5" height="3" rx="1.5" fill="#27272A"/>
+  <text x="61" y="31" fill="#F5F5F4" font-family="Arial, Helvetica, sans-serif" font-size="24" font-weight="600" letter-spacing="-0.6">RateKit</text>
+</svg>

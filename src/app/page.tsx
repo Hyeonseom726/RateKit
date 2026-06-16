@@ -1,3 +1,5 @@
+import Image from "next/image";
+
 const steps = [
   {
     number: "01",
@@ -54,8 +56,15 @@ export default function Home() {
     <main className="min-h-screen bg-black text-zinc-100">
       <header className="border-b border-zinc-800">
         <div className="mx-auto flex w-full max-w-7xl items-center justify-between px-5 py-5 sm:px-8 lg:px-12">
-          <a href="#" className="text-lg font-semibold tracking-tight text-stone-100">
-            RateKit
+          <a href="#" aria-label="RateKit home">
+            <Image
+              src="/ratekit-logo.svg"
+              alt="RateKit"
+              width={142}
+              height={40}
+              className="h-8 w-auto"
+              priority
+            />
           </a>
           <div className="flex items-center gap-3 sm:gap-5">
             <a
@@ -306,9 +315,22 @@ export default function Home() {
       </section>
 
       <footer className="border-t border-zinc-800">
-        <div className="mx-auto flex w-full max-w-7xl items-center justify-between px-5 py-7 text-xs text-zinc-600 sm:px-8 lg:px-12">
+        <div className="mx-auto flex w-full max-w-7xl flex-col gap-4 px-5 py-7 text-xs text-zinc-600 sm:flex-row sm:items-center sm:justify-between sm:px-8 lg:px-12">
           <p className="font-semibold text-zinc-400">RateKit</p>
-          <p>Built for independent creators.</p>
+          <div className="flex flex-wrap items-center gap-x-5 gap-y-2">
+            <a href="/privacy" className="transition-colors hover:text-zinc-300">
+              Privacy
+            </a>
+            <a href="/terms" className="transition-colors hover:text-zinc-300">
+              Terms
+            </a>
+            <a
+              href="mailto:support@hslab.tools"
+              className="transition-colors hover:text-zinc-300"
+            >
+              support@hslab.tools
+            </a>
+          </div>
         </div>
       </footer>
     </main>

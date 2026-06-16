@@ -1,6 +1,7 @@
 "use client";
 
 import { Suspense, useState } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 
@@ -163,6 +164,16 @@ function PreviewPageContent() {
   return (
     <main className="min-h-screen bg-black px-5 py-8 text-zinc-100 sm:px-8 sm:py-12">
       <div className="mx-auto w-full max-w-2xl">
+        <Link href="/" aria-label="RateKit home" className="mb-6 inline-block">
+          <Image
+            src="/ratekit-logo.svg"
+            alt="RateKit"
+            width={142}
+            height={40}
+            className="h-8 w-auto"
+            priority
+          />
+        </Link>
         <div className="mb-6 flex flex-col gap-4">
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <Link
@@ -256,6 +267,23 @@ function PreviewPageContent() {
           </div>
         </article>
       </div>
+      <footer className="mx-auto mt-12 flex w-full max-w-2xl flex-col gap-4 border-t border-zinc-800 pt-7 text-xs text-zinc-600 sm:flex-row sm:items-center sm:justify-between">
+        <p className="font-semibold text-zinc-400">RateKit</p>
+        <div className="flex flex-wrap items-center gap-x-5 gap-y-2">
+          <Link href="/privacy" className="transition-colors hover:text-zinc-300">
+            Privacy
+          </Link>
+          <Link href="/terms" className="transition-colors hover:text-zinc-300">
+            Terms
+          </Link>
+          <a
+            href="mailto:support@hslab.tools"
+            className="transition-colors hover:text-zinc-300"
+          >
+            support@hslab.tools
+          </a>
+        </div>
+      </footer>
     </main>
   );
 }

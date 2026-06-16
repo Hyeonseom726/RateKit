@@ -1,8 +1,9 @@
 "use client";
 
-import { Suspense, useMemo, useState } from "react";
+import { Suspense, useEffect, useMemo, useRef, useState } from "react";
+import Image from "next/image";
 import Link from "next/link";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 
 const platforms = [
   "Instagram",
@@ -68,16 +69,6 @@ function getPlatform(value: string | null): Platform {
   return platforms.includes(value as Platform)
     ? (value as Platform)
     : initialForm.platform;
-}
-
-function buildRateCardParams(form: FormState) {
-  const params = new URLSearchParams();
-
-  Object.entries(form).forEach(([key, value]) => {
-    params.set(key, value);
-  });
-
-  return params;
 }
 
 function getInitialForm(searchParams: { get: (name: string) => string | null }) {
@@ -156,6 +147,22 @@ function Field({
   suffix?: string;
   onChange: (name: keyof FormState, value: string) => void;
 }) {
+  function handleInput(event: React.FormEvent<HTMLInputElement>) {
+    const input = event.currentTarget;
+    const nextValue =
+      name === "followers" || name === "avgViews"
+        ? sanitizeIntegerInput(input.value)
+        : name === "engagementRate"
+          ? sanitizeDecimalInput(input.value)
+          : input.value;
+
+    if (input.value !== nextValue) {
+      input.value = nextValue;
+    }
+
+    onChange(name, nextValue);
+  }
+
   return (
     <label className="block">
       <span className="mb-2 block text-xs font-semibold uppercase tracking-[0.16em] text-zinc-500">
@@ -172,9 +179,11 @@ function Field({
                 ? "numeric"
                 : undefined
           }
-          value={value}
+          defaultValue={value}
           placeholder={placeholder}
-          onChange={(event) => onChange(name, event.target.value)}
+          onChange={handleInput}
+          onInput={handleInput}
+          onInputCapture={handleInput}
           onKeyDown={
             type === "number"
               ? (event) => {
@@ -209,7 +218,7 @@ function GeneratePageContent() {
   const [form, setForm] = useState<FormState>(() =>
     getInitialForm(searchParams),
   );
-  const router = useRouter();
+  const formRef = useRef<HTMLFormElement | null>(null);
 
   const rates = useMemo(
     () =>
@@ -233,8 +242,75 @@ function GeneratePageContent() {
     setForm((current) => ({ ...current, [name]: nextValue }));
   }
 
-  function openPreview() {
-    router.push(`/preview?${buildRateCardParams(form).toString()}`);
+  useEffect(() => {
+    const formElement = formRef.current;
+
+    if (!formElement) {
+      return;
+    }
+
+    function handleNativeInput(event: Event) {
+      const field = event.target;
+
+      if (
+        !(field instanceof HTMLInputElement) &&
+        !(field instanceof HTMLSelectElement)
+      ) {
+        return;
+      }
+
+      const name = field.name as keyof FormState;
+
+      if (!name || !(name in initialForm)) {
+        return;
+      }
+
+      const nextValue =
+        name === "followers" || name === "avgViews"
+          ? sanitizeIntegerInput(field.value)
+          : name === "engagementRate"
+            ? sanitizeDecimalInput(field.value)
+            : name === "platform"
+              ? getPlatform(field.value)
+              : field.value;
+
+      if (field.value !== nextValue) {
+        field.value = nextValue;
+      }
+
+      setForm((current) => ({ ...current, [name]: nextValue }));
+    }
+
+    formElement.addEventListener("input", handleNativeInput, true);
+    formElement.addEventListener("change", handleNativeInput, true);
+
+    return () => {
+      formElement.removeEventListener("input", handleNativeInput, true);
+      formElement.removeEventListener("change", handleNativeInput, true);
+    };
+  }, []);
+
+  function handlePlatformInput(event: React.FormEvent<HTMLSelectElement>) {
+    updateField("platform", getPlatform(event.currentTarget.value));
+  }
+
+  function handleFormInput(event: React.FormEvent<HTMLFormElement>) {
+    const field = event.target;
+
+    if (!(field instanceof HTMLInputElement || field instanceof HTMLSelectElement)) {
+      return;
+    }
+
+    const name = field.name as keyof FormState;
+
+    if (!name || !(name in initialForm)) {
+      return;
+    }
+
+    const nextValue =
+      name === "platform" ? getPlatform(field.value) : field.value;
+
+    updateField(name, nextValue);
   }
 
   return (
@@ -243,9 +319,16 @@ function GeneratePageContent() {
         <div className="mx-auto flex w-full max-w-7xl items-center justify-between px-5 py-5 sm:px-8 lg:px-12">
           <Link
             href="/"
-            className="text-lg font-semibold tracking-tight text-stone-100"
+            aria-label="RateKit home"
           >
-            RateKit
+            <Image
+              src="/ratekit-logo.svg"
+              alt="RateKit"
+              width={142}
+              height={40}
+              className="h-8 w-auto"
+              priority
+            />
           </Link>
           <p className="hidden text-xs font-semibold uppercase tracking-[0.18em] text-zinc-600 sm:block">
             Rate card builder
@@ -260,7 +343,7 @@ function GeneratePageContent() {
       </header>
 
       <div className="mx-auto grid w-full max-w-7xl border-x border-zinc-800 lg:grid-cols-[0.82fr_1.18fr]">
-        <section className="border-b border-zinc-800 px-5 py-10 sm:px-8 lg:border-b-0 lg:border-r lg:px-12 lg:py-14">
+        <section className="relative z-10 border-b border-zinc-800 px-5 py-10 sm:px-8 lg:border-b-0 lg:border-r lg:px-12 lg:py-14">
           <div className="border-b border-zinc-800 pb-8">
             <p className="text-xs font-semibold uppercase tracking-[0.18em] text-amber-300">
               Creator details
@@ -275,9 +358,22 @@ function GeneratePageContent() {
           </div>
 
           <form
-            onSubmit={(event) => event.preventDefault()}
+            id="rate-card-form"
+            ref={formRef}
+            action="/preview"
+            method="get"
+            onInput={handleFormInput}
+            onChange={handleFormInput}
             className="mt-8 grid gap-6 sm:grid-cols-2"
           >
+            <div className="border border-zinc-800 bg-zinc-950 p-5 text-sm leading-6 text-zinc-500 sm:col-span-2 lg:hidden">
+              <p className="font-medium text-zinc-300">
+                Preview opens after you generate it.
+              </p>
+              <p className="mt-2">
+                Mobile preview is shown on the next screen.
+              </p>
+            </div>
             <Field
               label="Creator name"
               name="creatorName"
@@ -306,10 +402,11 @@ function GeneratePageContent() {
                 Platform
               </span>
               <select
-                value={form.platform}
-                onChange={(event) =>
-                  updateField("platform", event.target.value as Platform)
-                }
+                name="platform"
+                defaultValue={form.platform}
+                onChange={handlePlatformInput}
+                onInput={handlePlatformInput}
+                onInputCapture={handlePlatformInput}
                 className="w-full border border-zinc-800 bg-zinc-950 px-4 py-3 text-sm text-stone-100 outline-none focus:border-zinc-600"
               >
                 {platforms.map((platform) => (
@@ -354,15 +451,13 @@ function GeneratePageContent() {
                 onChange={updateField}
               />
             </div>
+            <button
+              type="submit"
+              className="mt-2 w-full bg-stone-100 px-6 py-3 text-sm font-semibold text-black transition-colors hover:bg-amber-200 sm:col-span-2"
+            >
+              Generate preview
+            </button>
           </form>
-
-          <button
-            type="button"
-            onClick={openPreview}
-            className="mt-8 w-full bg-stone-100 px-6 py-3 text-sm font-semibold text-black transition-colors hover:bg-amber-200"
-          >
-            Generate preview
-          </button>
 
           <p className="mt-8 border-t border-zinc-800 pt-6 text-xs leading-5 text-zinc-600">
             Estimates are a starting point based on audience size, average
@@ -371,7 +466,7 @@ function GeneratePageContent() {
           </p>
         </section>
 
-        <section className="bg-zinc-950 px-5 py-10 sm:px-8 lg:px-12 lg:py-14">
+        <section className="hidden bg-zinc-950 px-5 py-10 sm:px-8 lg:block lg:px-12 lg:py-14">
           <div className="mb-6 flex items-center justify-between">
             <p className="text-xs font-semibold uppercase tracking-[0.18em] text-zinc-500">
               Live preview
@@ -379,7 +474,7 @@ function GeneratePageContent() {
             <p className="font-mono text-xs text-zinc-700">ESTIMATE / USD</p>
           </div>
 
-          <article className="relative mx-auto w-full max-w-2xl overflow-hidden border border-stone-300 bg-stone-100 text-zinc-950 shadow-[10px_10px_0_0_#27272a]">
+          <article className="relative isolate mx-auto w-full max-w-2xl overflow-hidden border border-stone-300 bg-stone-100 text-zinc-950 shadow-[10px_10px_0_0_#27272a]">
             <div className="pointer-events-none absolute inset-0 z-0 flex items-center justify-center overflow-hidden">
               <span className="-rotate-[28deg] whitespace-nowrap text-3xl font-semibold tracking-[0.22em] text-zinc-500/20 sm:text-4xl">
                 PREVIEW · RATEKIT
@@ -469,6 +564,25 @@ function GeneratePageContent() {
           </article>
         </section>
       </div>
+      <footer className="border-t border-zinc-800">
+        <div className="mx-auto flex w-full max-w-7xl flex-col gap-4 px-5 py-7 text-xs text-zinc-600 sm:flex-row sm:items-center sm:justify-between sm:px-8 lg:px-12">
+          <p className="font-semibold text-zinc-400">RateKit</p>
+          <div className="flex flex-wrap items-center gap-x-5 gap-y-2">
+            <Link href="/privacy" className="transition-colors hover:text-zinc-300">
+              Privacy
+            </Link>
+            <Link href="/terms" className="transition-colors hover:text-zinc-300">
+              Terms
+            </Link>
+            <a
+              href="mailto:support@hslab.tools"
+              className="transition-colors hover:text-zinc-300"
+            >
+              support@hslab.tools
+            </a>
+          </div>
+        </div>
+      </footer>
     </main>
   );
 }
