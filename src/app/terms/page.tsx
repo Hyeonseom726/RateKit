@@ -35,7 +35,7 @@ const sections = [
   {
     title: "Paid features",
     body: [
-      "Paid features, such as watermark-free export, may be added later. Any price and feature details will be shown before purchase.",
+      "Paid features, such as watermark-free export, may be offered. Prices and feature details are shown before purchase.",
     ],
   },
   {

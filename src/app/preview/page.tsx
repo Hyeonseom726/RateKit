@@ -191,7 +191,7 @@ function PreviewPageContent() {
             </button>
           </div>
           <p className="text-xs text-zinc-600">
-            Free preview. Watermark-free export coming soon.
+            Free preview. Export without watermark for $4 when ready.
           </p>
         </div>
 

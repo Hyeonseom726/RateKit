@@ -294,10 +294,19 @@ export default function Home() {
         </div>
         <div className="mt-14 grid border-l border-t border-zinc-800 lg:grid-cols-3">
           <div className="border-b border-r border-zinc-800 p-8 sm:p-10">
-            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-zinc-500">
-              Free preview
-            </p>
+            <div className="flex min-h-7 items-center justify-between gap-4">
+              <p className="text-xs font-semibold uppercase tracking-[0.18em] text-zinc-500">
+                Free preview
+              </p>
+              <span
+                aria-hidden="true"
+                className="invisible border border-zinc-800 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.16em]"
+              >
+                Coming soon
+              </span>
+            </div>
             <p className="mt-12 font-mono text-5xl text-stone-100">$0</p>
+            <p className="mt-2 font-mono text-sm text-zinc-500">/ preview</p>
             <p className="mt-6 max-w-sm leading-7 text-zinc-500">
               Build and preview a watermarked rate card before you commit.
             </p>
@@ -308,9 +317,17 @@ export default function Home() {
             </ul>
           </div>
           <div className="border-b border-r border-zinc-800 bg-stone-100 p-8 text-zinc-950 sm:p-10">
-            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-zinc-500">
-              Single card export
-            </p>
+            <div className="flex min-h-7 items-center justify-between gap-4">
+              <p className="text-xs font-semibold uppercase tracking-[0.18em] text-zinc-500">
+                Single card export
+              </p>
+              <span
+                aria-hidden="true"
+                className="invisible border border-zinc-300 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.16em]"
+              >
+                Coming soon
+              </span>
+            </div>
             <p className="mt-12 font-mono text-5xl">$4</p>
             <p className="mt-2 font-mono text-sm text-zinc-500">/ card</p>
             <p className="mt-6 max-w-sm leading-7 text-zinc-600">
@@ -323,7 +340,7 @@ export default function Home() {
             </ul>
           </div>
           <div className="border-b border-r border-zinc-800 p-8 sm:p-10">
-            <div className="flex items-center justify-between gap-4">
+            <div className="flex min-h-7 items-center justify-between gap-4">
               <p className="text-xs font-semibold uppercase tracking-[0.18em] text-zinc-500">
                 Pro
               </p>
