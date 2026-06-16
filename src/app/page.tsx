@@ -187,15 +187,13 @@ export default function Home() {
       </section>
 
       <section className="border-y border-zinc-800">
-        <div className="mx-auto grid w-full max-w-7xl border-x border-zinc-800 lg:grid-cols-[0.45fr_1fr]">
-          <div className="border-b border-zinc-800 px-5 py-12 sm:px-8 lg:border-b-0 lg:border-r lg:px-12">
+        <div className="mx-auto w-full max-w-7xl border-x border-zinc-800">
+          <div className="max-w-5xl px-5 py-14 sm:px-8 lg:px-12 lg:py-20">
             <SectionLabel number="01">The problem</SectionLabel>
-          </div>
-          <div className="px-5 py-16 sm:px-8 lg:px-12 lg:py-24">
-            <h2 className="max-w-3xl text-3xl font-medium leading-tight tracking-[-0.03em] text-stone-100 sm:text-5xl">
+            <h2 className="mt-6 max-w-3xl text-3xl font-medium leading-tight tracking-[-0.03em] text-stone-100 sm:text-5xl">
               Your rates should not live in a cluttered spreadsheet.
             </h2>
-            <div className="mt-10 grid gap-6 border-t border-zinc-800 pt-8 text-base leading-7 text-zinc-400 sm:grid-cols-2">
+            <div className="mt-8 grid gap-6 border-t border-zinc-800 pt-8 text-base leading-7 text-zinc-400 sm:grid-cols-2">
               <p>
                 Brands want to quickly understand what you offer, what it costs,
                 and how to work with you.
@@ -205,13 +203,31 @@ export default function Home() {
                 professional page that makes the next step obvious.
               </p>
             </div>
+
+            <div className="mt-8 border-t border-zinc-800">
+              {[
+                "Rates get scattered across notes, DMs, and old PDFs.",
+                "Brands cannot quickly tell what is included.",
+                "Every inquiry turns into another custom explanation.",
+              ].map((problem, index) => (
+                <div
+                  key={problem}
+                  className="flex items-center gap-5 border-b border-zinc-800 py-4 text-sm leading-6 text-zinc-400 sm:text-base"
+                >
+                  <span className="shrink-0 font-mono text-xs text-amber-300">
+                    0{index + 1}
+                  </span>
+                  <p>{problem}</p>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       </section>
 
       <section
         id="how-it-works"
-        className="mx-auto w-full max-w-7xl border-x border-zinc-800 px-5 py-20 sm:px-8 lg:px-12 lg:py-28"
+        className="mx-auto w-full max-w-7xl border-x border-zinc-800 px-5 py-16 sm:px-8 lg:px-12 lg:py-24"
       >
         <SectionLabel number="02">How it works</SectionLabel>
         <h2 className="mt-6 max-w-2xl text-3xl font-medium tracking-[-0.03em] text-stone-100 sm:text-5xl">
@@ -237,7 +253,7 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="border-y border-zinc-800 bg-zinc-950">
+      <section className="border-y border-zinc-800 bg-black">
         <div className="mx-auto grid w-full max-w-7xl border-x border-zinc-800 lg:grid-cols-2">
           <div className="border-b border-zinc-800 px-5 py-20 sm:px-8 lg:border-b-0 lg:border-r lg:px-12 lg:py-28">
             <SectionLabel number="03">What you get</SectionLabel>
