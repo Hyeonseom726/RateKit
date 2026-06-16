@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 
 const steps = [
   {
@@ -56,7 +57,7 @@ export default function Home() {
     <main className="min-h-screen bg-black text-zinc-100">
       <header className="border-b border-zinc-800">
         <div className="mx-auto flex w-full max-w-7xl items-center justify-between px-5 py-5 sm:px-8 lg:px-12">
-          <a href="#" aria-label="RateKit home">
+          <Link href="/" aria-label="RateKit home">
             <Image
               src="/ratekit-logo.svg"
               alt="RateKit"
@@ -65,7 +66,7 @@ export default function Home() {
               className="h-8 w-auto"
               priority
             />
-          </a>
+          </Link>
           <div className="flex items-center gap-3 sm:gap-5">
             <a
               href="#how-it-works"
@@ -284,31 +285,62 @@ export default function Home() {
         <SectionLabel number="04">Simple pricing</SectionLabel>
         <div className="mt-6 flex flex-col justify-between gap-8 lg:flex-row lg:items-end">
           <h2 className="max-w-2xl text-3xl font-medium tracking-[-0.03em] text-stone-100 sm:text-5xl">
-            Preview for free. Pay only when it is ready.
+            Preview for free. Pay only when you need the finished card.
           </h2>
           <p className="max-w-sm text-sm leading-6 text-zinc-500">
             Build the full page first. Export without a watermark when you are
             happy with it.
           </p>
         </div>
-        <div className="mt-14 grid border-l border-t border-zinc-800 md:grid-cols-2">
+        <div className="mt-14 grid border-l border-t border-zinc-800 lg:grid-cols-3">
           <div className="border-b border-r border-zinc-800 p-8 sm:p-10">
             <p className="text-xs font-semibold uppercase tracking-[0.18em] text-zinc-500">
               Free preview
             </p>
             <p className="mt-12 font-mono text-5xl text-stone-100">$0</p>
             <p className="mt-6 max-w-sm leading-7 text-zinc-500">
-              Build and review your rate card before you commit.
+              Build and preview a watermarked rate card before you commit.
             </p>
+            <ul className="mt-8 space-y-3 border-t border-zinc-800 pt-6 text-sm text-zinc-500">
+              <li>Watermarked preview page</li>
+              <li>Shareable preview link</li>
+              <li>No download</li>
+            </ul>
           </div>
           <div className="border-b border-r border-zinc-800 bg-stone-100 p-8 text-zinc-950 sm:p-10">
             <p className="text-xs font-semibold uppercase tracking-[0.18em] text-zinc-500">
-              Watermark-free export
+              Single card export
             </p>
-            <p className="mt-12 font-mono text-5xl">$9</p>
+            <p className="mt-12 font-mono text-5xl">$4</p>
+            <p className="mt-2 font-mono text-sm text-zinc-500">/ card</p>
             <p className="mt-6 max-w-sm leading-7 text-zinc-600">
-              Export a polished, professional rate card without a watermark.
+              Remove the watermark and download one finished rate card.
             </p>
+            <ul className="mt-8 space-y-3 border-t border-zinc-300 pt-6 text-sm text-zinc-600">
+              <li>Watermark removed</li>
+              <li>Download-ready card</li>
+              <li>Pay only when you need it</li>
+            </ul>
+          </div>
+          <div className="border-b border-r border-zinc-800 p-8 sm:p-10">
+            <div className="flex items-center justify-between gap-4">
+              <p className="text-xs font-semibold uppercase tracking-[0.18em] text-zinc-500">
+                Pro
+              </p>
+              <span className="border border-zinc-800 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.16em] text-amber-300">
+                Coming soon
+              </span>
+            </div>
+            <p className="mt-12 font-mono text-5xl text-stone-100">$14</p>
+            <p className="mt-2 font-mono text-sm text-zinc-500">/ month</p>
+            <p className="mt-6 max-w-sm leading-7 text-zinc-500">
+              Unlimited cards during your subscription.
+            </p>
+            <ul className="mt-8 space-y-3 border-t border-zinc-800 pt-6 text-sm text-zinc-500">
+              <li>Unlimited watermark-free cards</li>
+              <li>Saved cards</li>
+              <li>Edit anytime</li>
+            </ul>
           </div>
         </div>
       </section>
