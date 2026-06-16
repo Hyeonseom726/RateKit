@@ -1,16 +1,16 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
-import GeneratePageClient from "./generate-page";
+import LoginForm from "./login-form";
 
-export default async function GeneratePage() {
+export default async function LoginPage() {
   const supabase = await createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();
 
-  if (!user) {
-    redirect("/login");
+  if (user) {
+    redirect("/generate");
   }
 
-  return <GeneratePageClient />;
+  return <LoginForm />;
 }

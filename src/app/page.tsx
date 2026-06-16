@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
+import { createClient } from "@/lib/supabase/server";
 
 const steps = [
   {
@@ -52,7 +53,12 @@ function SamplePackage({ name, price }: { name: string; price: string }) {
   );
 }
 
-export default function Home() {
+export default async function Home() {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
   return (
     <main className="min-h-screen bg-black text-zinc-100">
       <header className="border-b border-zinc-800">
@@ -80,6 +86,21 @@ export default function Home() {
             >
               View pricing
             </a>
+            {user ? (
+              <Link
+                href="/logout"
+                className="py-2 text-sm text-zinc-500 transition-colors hover:text-zinc-200"
+              >
+                Sign out
+              </Link>
+            ) : (
+              <Link
+                href="/login"
+                className="py-2 text-sm text-zinc-500 transition-colors hover:text-zinc-200"
+              >
+                Sign in
+              </Link>
+            )}
           </div>
         </div>
       </header>

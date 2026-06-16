@@ -12,7 +12,7 @@ const sections = [
     title: "Information we collect",
     body: [
       "You may enter a creator name, creator handle, niche, platform, audience statistics, contact email, and sponsorship package information.",
-      "If sign-in is added, RateKit may collect basic account information from the sign-in provider, such as your name, email address, and profile image.",
+      "When you sign in with Google, RateKit may receive basic account information from your Google account, such as your name, email address, and profile image.",
     ],
   },
   {
