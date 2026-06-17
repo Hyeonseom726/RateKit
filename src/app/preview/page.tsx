@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
-import PreviewPageClient from "./preview-page";
+import PreviewPageClient from "./preview-client";
 
 export default async function PreviewPage() {
   const supabase = await createClient();

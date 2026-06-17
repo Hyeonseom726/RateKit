@@ -4,6 +4,7 @@ import { Suspense, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
+import { saveRateCard } from "@/app/actions/rate-cards";
 
 const platforms = [
   "Instagram",
@@ -108,6 +109,10 @@ export default function PreviewPage() {
 function PreviewPageContent() {
   const params = useSearchParams();
   const [copied, setCopied] = useState(false);
+  const [saveStatus, setSaveStatus] = useState<"idle" | "saving" | "saved">(
+    "idle",
+  );
+  const [saveError, setSaveError] = useState("");
   const creatorName = getParam(params, "creatorName", defaults.creatorName);
   const creatorHandle = getParam(
     params,
@@ -161,6 +166,30 @@ function PreviewPageContent() {
     }
   }
 
+  async function handleSaveRateCard() {
+    setSaveStatus("saving");
+    setSaveError("");
+
+    const result = await saveRateCard({
+      creatorName,
+      creatorHandle,
+      niche,
+      platform,
+      followers,
+      avgViews,
+      engagementRate,
+      contactEmail,
+    });
+
+    if (!result.ok) {
+      setSaveStatus("idle");
+      setSaveError(result.error || "Could not save this rate card.");
+      return;
+    }
+
+    setSaveStatus("saved");
+  }
+
   return (
     <main className="min-h-screen bg-black px-5 py-8 text-zinc-100 sm:px-8 sm:py-12">
       <div className="mx-auto w-full max-w-2xl">
@@ -190,14 +219,31 @@ function PreviewPageContent() {
             >
               ← Edit rate card
             </Link>
-            <button
-              type="button"
-              onClick={copyPreviewLink}
-              className="border border-zinc-700 px-4 py-2 text-sm font-medium text-stone-200 transition-colors hover:border-zinc-500 hover:bg-zinc-900"
-            >
-              {copied ? "Copied" : "Copy preview link"}
-            </button>
+            <div className="flex flex-col gap-3 sm:flex-row">
+              <button
+                type="button"
+                onClick={handleSaveRateCard}
+                disabled={saveStatus === "saving"}
+                className="border border-zinc-700 px-4 py-2 text-sm font-medium text-stone-200 transition-colors hover:border-zinc-500 hover:bg-zinc-900 disabled:cursor-not-allowed disabled:opacity-70"
+              >
+                {saveStatus === "saving"
+                  ? "Saving..."
+                  : saveStatus === "saved"
+                    ? "Saved"
+                    : "Save rate card"}
+              </button>
+              <button
+                type="button"
+                onClick={copyPreviewLink}
+                className="border border-zinc-700 px-4 py-2 text-sm font-medium text-stone-200 transition-colors hover:border-zinc-500 hover:bg-zinc-900"
+              >
+                {copied ? "Copied" : "Copy preview link"}
+              </button>
+            </div>
           </div>
+          {saveError ? (
+            <p className="text-xs text-amber-300">{saveError}</p>
+          ) : null}
           <p className="text-xs text-zinc-600">
             Free preview. Export without watermark for $4 when ready.
           </p>
