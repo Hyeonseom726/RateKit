@@ -113,6 +113,7 @@ function PreviewPageContent() {
     "idle",
   );
   const [saveError, setSaveError] = useState("");
+  const cardId = params.get("cardId") ?? "";
   const creatorName = getParam(params, "creatorName", defaults.creatorName);
   const creatorHandle = getParam(
     params,
@@ -142,6 +143,7 @@ function PreviewPageContent() {
     parseNonNegativeNumber(engagementRate),
   );
   const editParams = buildRateCardParams({
+    ...(cardId ? { cardId } : {}),
     creatorName,
     creatorHandle,
     niche,
@@ -171,6 +173,7 @@ function PreviewPageContent() {
     setSaveError("");
 
     const result = await saveRateCard({
+      cardId,
       creatorName,
       creatorHandle,
       niche,

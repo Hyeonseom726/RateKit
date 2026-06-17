@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { redirect } from "next/navigation";
+import { deleteRateCard } from "@/app/actions/rate-cards";
 import { createClient } from "@/lib/supabase/server";
 
 type SavedRateCard = {
@@ -31,6 +32,7 @@ function formatDate(value: string | null) {
 
 function buildPreviewUrl(card: SavedRateCard) {
   const params = new URLSearchParams({
+    cardId: card.id,
     creatorName: card.creator_name ?? "",
     creatorHandle: card.creator_handle ?? "",
     niche: card.niche ?? "",
@@ -168,6 +170,21 @@ export default async function DashboardPage() {
                     Open preview
                   </Link>
                 </div>
+                <form
+                  action={async () => {
+                    "use server";
+
+                    await deleteRateCard(card.id);
+                  }}
+                  className="mt-5 border-t border-zinc-800 pt-5"
+                >
+                  <button
+                    type="submit"
+                    className="text-sm text-zinc-600 transition-colors hover:text-stone-300"
+                  >
+                    Delete
+                  </button>
+                </form>
               </article>
             ))}
           </div>

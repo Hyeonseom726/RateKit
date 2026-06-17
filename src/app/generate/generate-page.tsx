@@ -215,6 +215,7 @@ export default function GeneratePage() {
 
 function GeneratePageContent() {
   const searchParams = useSearchParams();
+  const cardId = searchParams.get("cardId") ?? "";
   const [form, setForm] = useState<FormState>(() =>
     getInitialForm(searchParams),
   );
@@ -388,6 +389,9 @@ function GeneratePageContent() {
                 Mobile preview is shown on the next screen.
               </p>
             </div>
+            {cardId ? (
+              <input type="hidden" name="cardId" value={cardId} />
+            ) : null}
             <Field
               label="Creator name"
               name="creatorName"
