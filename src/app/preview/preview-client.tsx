@@ -113,7 +113,9 @@ function PreviewPageContent() {
     "idle",
   );
   const [saveError, setSaveError] = useState("");
-  const cardId = params.get("cardId") ?? "";
+  const [savedCardId, setSavedCardId] = useState(
+    () => params.get("cardId") ?? "",
+  );
   const creatorName = getParam(params, "creatorName", defaults.creatorName);
   const creatorHandle = getParam(
     params,
@@ -143,7 +145,7 @@ function PreviewPageContent() {
     parseNonNegativeNumber(engagementRate),
   );
   const editParams = buildRateCardParams({
-    ...(cardId ? { cardId } : {}),
+    ...(savedCardId ? { cardId: savedCardId } : {}),
     creatorName,
     creatorHandle,
     niche,
@@ -176,7 +178,7 @@ function PreviewPageContent() {
     setSaveError("");
 
     const result = await saveRateCard({
-      cardId,
+      cardId: savedCardId,
       creatorName,
       creatorHandle,
       niche,
@@ -193,7 +195,12 @@ function PreviewPageContent() {
       return;
     }
 
+    setSavedCardId(result.id);
     setSaveStatus("saved");
+
+    const previewUrl = new URL(window.location.href);
+    previewUrl.searchParams.set("cardId", result.id);
+    window.history.replaceState(null, "", previewUrl.toString());
   }
 
   return (
@@ -258,11 +265,6 @@ function PreviewPageContent() {
           {saveError ? (
             <p className="text-xs text-amber-300">{saveError}</p>
           ) : null}
-          <p className="text-xs text-zinc-600">
-            {cardId
-              ? "Opened from a saved card. Saving updates this card."
-              : "Saving creates a new saved card."}
-          </p>
           {saveStatus === "saved" ? (
             <Link
               href="/dashboard"

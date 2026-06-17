@@ -35,14 +35,14 @@ const platformMultipliers: Record<Platform, number> = {
 };
 
 const initialForm: FormState = {
-  creatorName: "Jamie Park",
-  creatorHandle: "@jamiecreates",
-  niche: "Food, culture & city guides",
+  creatorName: "",
+  creatorHandle: "",
+  niche: "",
   platform: "Instagram",
-  followers: "48000",
-  avgViews: "18500",
-  engagementRate: "4.2",
-  contactEmail: "hello@jamie.com",
+  followers: "",
+  avgViews: "",
+  engagementRate: "",
+  contactEmail: "",
 };
 
 function sanitizeIntegerInput(value: string) {
@@ -403,7 +403,7 @@ function GeneratePageContent() {
               label="Creator handle"
               name="creatorHandle"
               value={form.creatorHandle}
-              placeholder="@yourhandle"
+              placeholder="@jamiecreates"
               onChange={updateField}
             />
             <div className="sm:col-span-2">
@@ -465,7 +465,7 @@ function GeneratePageContent() {
                 name="contactEmail"
                 value={form.contactEmail}
                 type="email"
-                placeholder="hello@example.com"
+                placeholder="hello@jamie.com"
                 onChange={updateField}
               />
             </div>

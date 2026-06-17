@@ -56,7 +56,7 @@ export default async function DashboardPage() {
     redirect("/login");
   }
 
-  const { data } = await supabase
+  const { data, error } = await supabase
     .from("rate_cards")
     .select(
       "id, creator_name, creator_handle, niche, platform, followers, avg_views, engagement_rate, contact_email, is_paid, created_at",
@@ -65,9 +65,10 @@ export default async function DashboardPage() {
     .order("created_at", { ascending: false });
 
   const cards = (data ?? []) as SavedRateCard[];
+  const hasLoadError = Boolean(error);
 
   return (
-    <main className="min-h-screen bg-black text-zinc-100">
+    <main className="flex min-h-screen flex-col bg-black text-zinc-100">
       <header className="border-b border-zinc-800">
         <div className="mx-auto flex w-full max-w-7xl items-center justify-between px-5 py-5 sm:px-8 lg:px-12">
           <Link href="/" aria-label="RateKit home">
@@ -97,7 +98,7 @@ export default async function DashboardPage() {
         </div>
       </header>
 
-      <section className="mx-auto w-full max-w-7xl border-x border-zinc-800 px-5 py-14 sm:px-8 lg:px-12 lg:py-20">
+      <section className="mx-auto w-full max-w-7xl flex-1 border-x border-zinc-800 px-5 py-14 sm:px-8 lg:px-12 lg:py-20">
         <div className="flex flex-col justify-between gap-8 border-b border-zinc-800 pb-10 lg:flex-row lg:items-end">
           <div>
             <p className="text-xs font-semibold uppercase tracking-[0.18em] text-amber-300">
@@ -119,7 +120,16 @@ export default async function DashboardPage() {
           </Link>
         </div>
 
-        {cards.length === 0 ? (
+        {hasLoadError ? (
+          <div className="mt-10 border border-zinc-800 p-8 sm:p-10">
+            <h2 className="text-2xl font-medium text-stone-100">
+              Could not load saved rate cards.
+            </h2>
+            <p className="mt-3 max-w-md leading-7 text-zinc-500">
+              Please refresh the page or try again in a moment.
+            </p>
+          </div>
+        ) : cards.length === 0 ? (
           <div className="mt-10 border border-zinc-800 p-8 sm:p-10">
             <h2 className="text-2xl font-medium text-stone-100">
               No saved rate cards yet.
@@ -178,6 +188,25 @@ export default async function DashboardPage() {
           </div>
         )}
       </section>
+      <footer className="border-t border-zinc-800">
+        <div className="mx-auto flex w-full max-w-7xl flex-col gap-4 px-5 py-7 text-xs text-zinc-600 sm:flex-row sm:items-center sm:justify-between sm:px-8 lg:px-12">
+          <p className="font-semibold text-zinc-400">RateKit</p>
+          <div className="flex flex-wrap items-center gap-x-5 gap-y-2">
+            <Link href="/privacy" className="transition-colors hover:text-zinc-300">
+              Privacy
+            </Link>
+            <Link href="/terms" className="transition-colors hover:text-zinc-300">
+              Terms
+            </Link>
+            <a
+              href="mailto:support@hslab.tools"
+              className="transition-colors hover:text-zinc-300"
+            >
+              support@hslab.tools
+            </a>
+          </div>
+        </div>
+      </footer>
     </main>
   );
 }
