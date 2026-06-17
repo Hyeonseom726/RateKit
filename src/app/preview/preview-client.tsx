@@ -204,12 +204,20 @@ function PreviewPageContent() {
               priority
             />
           </Link>
-          <Link
-            href="/logout"
-            className="text-sm text-zinc-500 transition-colors hover:text-stone-200"
-          >
-            Sign out
-          </Link>
+          <div className="flex items-center gap-4">
+            <Link
+              href="/dashboard"
+              className="text-sm text-zinc-500 transition-colors hover:text-stone-200"
+            >
+              Dashboard
+            </Link>
+            <Link
+              href="/logout"
+              className="text-sm text-zinc-500 transition-colors hover:text-stone-200"
+            >
+              Sign out
+            </Link>
+          </div>
         </div>
         <div className="mb-6 flex flex-col gap-4">
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
@@ -243,6 +251,14 @@ function PreviewPageContent() {
           </div>
           {saveError ? (
             <p className="text-xs text-amber-300">{saveError}</p>
+          ) : null}
+          {saveStatus === "saved" ? (
+            <Link
+              href="/dashboard"
+              className="text-xs font-medium text-stone-300 transition-colors hover:text-amber-200"
+            >
+              View dashboard
+            </Link>
           ) : null}
           <p className="text-xs text-zinc-600">
             Free preview. Export without watermark for $4 when ready.

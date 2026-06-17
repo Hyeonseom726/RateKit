@@ -87,12 +87,20 @@ export default async function Home() {
               View pricing
             </a>
             {user ? (
-              <Link
-                href="/logout"
-                className="py-2 text-sm text-zinc-500 transition-colors hover:text-zinc-200"
-              >
-                Sign out
-              </Link>
+              <>
+                <Link
+                  href="/dashboard"
+                  className="py-2 text-sm text-zinc-500 transition-colors hover:text-zinc-200"
+                >
+                  Dashboard
+                </Link>
+                <Link
+                  href="/logout"
+                  className="py-2 text-sm text-zinc-500 transition-colors hover:text-zinc-200"
+                >
+                  Sign out
+                </Link>
+              </>
             ) : (
               <Link
                 href="/login"

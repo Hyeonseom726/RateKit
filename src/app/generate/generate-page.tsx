@@ -335,6 +335,12 @@ function GeneratePageContent() {
           </p>
           <div className="flex items-center gap-4">
             <Link
+              href="/dashboard"
+              className="text-sm text-zinc-500 transition-colors hover:text-stone-200"
+            >
+              Dashboard
+            </Link>
+            <Link
               href="/logout"
               className="text-sm text-zinc-500 transition-colors hover:text-stone-200"
             >

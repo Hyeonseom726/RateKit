@@ -52,7 +52,7 @@ export async function saveRateCard(
   if (!user) {
     return {
       ok: false,
-      error: "No authenticated user found. Please sign in again.",
+      error: "Please sign in to save your rate card.",
     };
   }
 
@@ -72,7 +72,7 @@ export async function saveRateCard(
   if (!isPlatform(input.platform)) {
     return {
       ok: false,
-      error: `Invalid platform "${input.platform}". Choose Instagram, YouTube, TikTok, X, or Newsletter.`,
+      error: "Please choose a valid platform.",
     };
   }
 
@@ -94,9 +94,11 @@ export async function saveRateCard(
     .single();
 
   if (error) {
+    console.error("Failed to save rate card:", error.message);
+
     return {
       ok: false,
-      error: error.message || "Could not save this rate card.",
+      error: "Could not save this rate card. Please try again.",
     };
   }
 
