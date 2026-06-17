@@ -1,7 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { deleteRateCard } from "@/app/actions/rate-cards";
+import DeleteRateCardButton from "./delete-rate-card-button";
 import { createClient } from "@/lib/supabase/server";
 
 type SavedRateCard = {
@@ -170,21 +170,9 @@ export default async function DashboardPage() {
                     Open preview
                   </Link>
                 </div>
-                <form
-                  action={async () => {
-                    "use server";
-
-                    await deleteRateCard(card.id);
-                  }}
-                  className="mt-5 border-t border-zinc-800 pt-5"
-                >
-                  <button
-                    type="submit"
-                    className="text-sm text-zinc-600 transition-colors hover:text-stone-300"
-                  >
-                    Delete
-                  </button>
-                </form>
+                <div className="mt-5 border-t border-zinc-800 pt-5">
+                  <DeleteRateCardButton cardId={card.id} />
+                </div>
               </article>
             ))}
           </div>

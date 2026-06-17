@@ -160,7 +160,10 @@ function PreviewPageContent() {
     }
 
     try {
-      await navigator.clipboard.writeText(window.location.href);
+      const previewUrl = new URL(window.location.href);
+      previewUrl.searchParams.delete("cardId");
+
+      await navigator.clipboard.writeText(previewUrl.toString());
       setCopied(true);
       window.setTimeout(() => setCopied(false), 2000);
     } catch {
@@ -255,6 +258,11 @@ function PreviewPageContent() {
           {saveError ? (
             <p className="text-xs text-amber-300">{saveError}</p>
           ) : null}
+          <p className="text-xs text-zinc-600">
+            {cardId
+              ? "Opened from a saved card. Saving updates this card."
+              : "Saving creates a new saved card."}
+          </p>
           {saveStatus === "saved" ? (
             <Link
               href="/dashboard"
