@@ -11,19 +11,20 @@ const sections = [
   {
     title: "What RateKit does",
     body: [
-      "RateKit helps creators build pricing pages and sponsorship rate cards from information they provide.",
+      "RateKit helps creators build pricing pages and sponsorship rate cards from information they provide, including package names, prices, descriptions, audience metrics, and contact details.",
     ],
   },
   {
     title: "User responsibility",
     body: [
-      "You are responsible for the accuracy of the information you enter and for deciding whether your pricing and content are appropriate for your business.",
+      "You are responsible for the accuracy of the information you enter and for reviewing, customizing, and using your final package names, prices, descriptions, deliverables, and business terms before sharing or using a rate card.",
+      "You are responsible for what you publish or share through RateKit.",
     ],
   },
   {
     title: "Pricing estimates",
     body: [
-      "RateKit provides rough sponsorship pricing estimates. They are starting points only and are not financial, legal, tax, or business advice.",
+      "RateKit provides suggested sponsorship rates as starting points only. They are not financial, legal, tax, or business advice, and RateKit does not decide your final pricing.",
     ],
   },
   {
@@ -35,7 +36,14 @@ const sections = [
   {
     title: "Paid features",
     body: [
-      "Paid features, such as watermark-free export, may be offered. Prices and feature details are shown before purchase.",
+      "Paid features, such as watermark-free export, may be offered. Prices and feature details are shown before purchase. Payments may be processed by a third-party payment provider or merchant of record, and that provider's terms may also apply.",
+    ],
+  },
+  {
+    title: "Public sharing",
+    body: [
+      "Public share links, when available, may make selected rate card information visible to anyone with the link.",
+      "Do not publish or share information that you do not want brands or link recipients to see.",
     ],
   },
   {

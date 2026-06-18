@@ -4,6 +4,17 @@ import { redirect } from "next/navigation";
 import DeleteRateCardButton from "./delete-rate-card-button";
 import { createClient } from "@/lib/supabase/server";
 
+const platforms = [
+  "Instagram",
+  "YouTube",
+  "TikTok",
+  "X",
+  "Newsletter",
+] as const;
+
+type Platform = (typeof platforms)[number];
+type SearchBy = "name" | "handle";
+
 type SavedRateCard = {
   id: string;
   creator_name: string | null;
@@ -14,8 +25,23 @@ type SavedRateCard = {
   avg_views: number | null;
   engagement_rate: number | null;
   contact_email: string | null;
+  starter_name: string | null;
+  standard_name: string | null;
+  premium_name: string | null;
+  starter_price: number | null;
+  standard_price: number | null;
+  premium_price: number | null;
+  starter_description: string | null;
+  standard_description: string | null;
+  premium_description: string | null;
   is_paid: boolean | null;
   created_at: string | null;
+};
+
+type DashboardSearchParams = {
+  searchBy?: string | string[];
+  q?: string | string[];
+  platform?: string | string[];
 };
 
 function formatDate(value: string | null) {
@@ -28,6 +54,28 @@ function formatDate(value: string | null) {
     day: "numeric",
     year: "numeric",
   }).format(new Date(value));
+}
+
+function appendNullableParam(
+  params: URLSearchParams,
+  name: string,
+  value: string | number | null,
+) {
+  if (value !== null) {
+    params.set(name, String(value));
+  }
+}
+
+function getStringParam(value: string | string[] | undefined) {
+  return Array.isArray(value) ? value[0] ?? "" : value ?? "";
+}
+
+function getSearchBy(value: string): SearchBy {
+  return value === "handle" ? "handle" : "name";
+}
+
+function getPlatform(value: string) {
+  return platforms.includes(value as Platform) ? value : "";
 }
 
 function buildPreviewUrl(card: SavedRateCard) {
@@ -43,10 +91,45 @@ function buildPreviewUrl(card: SavedRateCard) {
     contactEmail: card.contact_email ?? "",
   });
 
+  appendNullableParam(params, "starterPrice", card.starter_price);
+  appendNullableParam(params, "standardPrice", card.standard_price);
+  appendNullableParam(params, "premiumPrice", card.premium_price);
+  appendNullableParam(params, "starterName", card.starter_name);
+  appendNullableParam(params, "standardName", card.standard_name);
+  appendNullableParam(params, "premiumName", card.premium_name);
+  appendNullableParam(
+    params,
+    "starterDescription",
+    card.starter_description,
+  );
+  appendNullableParam(
+    params,
+    "standardDescription",
+    card.standard_description,
+  );
+  appendNullableParam(
+    params,
+    "premiumDescription",
+    card.premium_description,
+  );
+
   return `/preview?${params.toString()}`;
 }
 
-export default async function DashboardPage() {
+export default async function DashboardPage({
+  searchParams,
+}: {
+  searchParams?: Promise<DashboardSearchParams>;
+}) {
+  const resolvedSearchParams = (await searchParams) ?? {};
+  const searchBy = getSearchBy(
+    getStringParam(resolvedSearchParams.searchBy),
+  );
+  const searchQuery = getStringParam(resolvedSearchParams.q).trim();
+  const platformFilter = getPlatform(
+    getStringParam(resolvedSearchParams.platform),
+  );
+  const hasFilters = Boolean(searchQuery || platformFilter);
   const supabase = await createClient();
   const {
     data: { user },
@@ -56,13 +139,27 @@ export default async function DashboardPage() {
     redirect("/login");
   }
 
-  const { data, error } = await supabase
+  let query = supabase
     .from("rate_cards")
     .select(
-      "id, creator_name, creator_handle, niche, platform, followers, avg_views, engagement_rate, contact_email, is_paid, created_at",
+      "id, creator_name, creator_handle, niche, platform, followers, avg_views, engagement_rate, contact_email, starter_name, standard_name, premium_name, starter_price, standard_price, premium_price, starter_description, standard_description, premium_description, is_paid, created_at",
     )
-    .eq("user_id", user.id)
-    .order("created_at", { ascending: false });
+    .eq("user_id", user.id);
+
+  if (searchQuery) {
+    query =
+      searchBy === "handle"
+        ? query.ilike("creator_handle", `%${searchQuery}%`)
+        : query.ilike("creator_name", `%${searchQuery}%`);
+  }
+
+  if (platformFilter) {
+    query = query.eq("platform", platformFilter);
+  }
+
+  const { data, error } = await query.order("created_at", {
+    ascending: false,
+  });
 
   const cards = (data ?? []) as SavedRateCard[];
   const hasLoadError = Boolean(error);
@@ -120,6 +217,65 @@ export default async function DashboardPage() {
           </Link>
         </div>
 
+        <form className="mt-8 grid gap-4 border border-zinc-800 p-5 sm:grid-cols-[12rem_minmax(0,1fr)] lg:grid-cols-[12rem_minmax(0,1fr)_14rem_auto_auto]">
+          <label className="block">
+            <span className="mb-2 block text-xs font-semibold uppercase tracking-[0.16em] text-zinc-500">
+              Search by
+            </span>
+            <select
+              name="searchBy"
+              defaultValue={searchBy}
+              className="w-full border border-zinc-800 bg-zinc-950 px-4 py-3 text-sm text-stone-100 outline-none focus:border-zinc-600"
+            >
+              <option value="name">Creator name</option>
+              <option value="handle">Creator handle</option>
+            </select>
+          </label>
+          <label className="block">
+            <span className="mb-2 block text-xs font-semibold uppercase tracking-[0.16em] text-zinc-500">
+              Search
+            </span>
+            <input
+              name="q"
+              type="text"
+              defaultValue={searchQuery}
+              placeholder={
+                searchBy === "handle" ? "@jamiecreates" : "Jamie Park"
+              }
+              className="w-full border border-zinc-800 bg-zinc-950 px-4 py-3 text-sm text-stone-100 outline-none placeholder:text-zinc-700 focus:border-zinc-600"
+            />
+          </label>
+          <label className="block">
+            <span className="mb-2 block text-xs font-semibold uppercase tracking-[0.16em] text-zinc-500">
+              Platform
+            </span>
+            <select
+              name="platform"
+              defaultValue={platformFilter}
+              className="w-full border border-zinc-800 bg-zinc-950 px-4 py-3 text-sm text-stone-100 outline-none focus:border-zinc-600"
+            >
+              <option value="">All platforms</option>
+              {platforms.map((platform) => (
+                <option key={platform} value={platform}>
+                  {platform}
+                </option>
+              ))}
+            </select>
+          </label>
+          <button
+            type="submit"
+            className="bg-stone-100 px-5 py-3 text-sm font-semibold text-black transition-colors hover:bg-amber-200 lg:self-end"
+          >
+            Apply
+          </button>
+          <Link
+            href="/dashboard"
+            className="border border-zinc-800 px-5 py-3 text-center text-sm font-medium text-zinc-500 transition-colors hover:border-zinc-600 hover:text-stone-200 lg:self-end"
+          >
+            Clear
+          </Link>
+        </form>
+
         {hasLoadError ? (
           <div className="mt-10 border border-zinc-800 p-8 sm:p-10">
             <h2 className="text-2xl font-medium text-stone-100">
@@ -127,6 +283,15 @@ export default async function DashboardPage() {
             </h2>
             <p className="mt-3 max-w-md leading-7 text-zinc-500">
               Please refresh the page or try again in a moment.
+            </p>
+          </div>
+        ) : cards.length === 0 && hasFilters ? (
+          <div className="mt-10 border border-zinc-800 p-8 sm:p-10">
+            <h2 className="text-2xl font-medium text-stone-100">
+              No matching rate cards.
+            </h2>
+            <p className="mt-3 max-w-md leading-7 text-zinc-500">
+              Try changing your search or filters.
             </p>
           </div>
         ) : cards.length === 0 ? (

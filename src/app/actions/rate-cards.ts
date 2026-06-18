@@ -23,6 +23,15 @@ export type SaveRateCardInput = {
   avgViews: string;
   engagementRate: string;
   contactEmail: string;
+  starterName?: string;
+  standardName?: string;
+  premiumName?: string;
+  starterPrice: string;
+  standardPrice: string;
+  premiumPrice: string;
+  starterDescription: string;
+  standardDescription: string;
+  premiumDescription: string;
 };
 
 export type SaveRateCardResult =
@@ -47,6 +56,18 @@ function parseNonNegativeNumber(value: string) {
   return Number.isFinite(number) && number >= 0 ? number : 0;
 }
 
+function parsePackagePrice(value: string) {
+  const trimmedValue = value.trim();
+
+  if (!trimmedValue) {
+    return null;
+  }
+
+  const number = Number(trimmedValue);
+
+  return Number.isFinite(number) && number >= 0 ? Math.floor(number) : null;
+}
+
 export async function saveRateCard(
   input: SaveRateCardInput,
 ): Promise<SaveRateCardResult> {
@@ -66,6 +87,14 @@ export async function saveRateCard(
   const creatorHandle = trimString(input.creatorHandle);
   const niche = trimString(input.niche);
   const contactEmail = trimString(input.contactEmail);
+  const starterName =
+    input.starterName === undefined ? "Starter" : trimString(input.starterName);
+  const standardName =
+    input.standardName === undefined
+      ? "Standard"
+      : trimString(input.standardName);
+  const premiumName =
+    input.premiumName === undefined ? "Premium" : trimString(input.premiumName);
 
   if (!creatorName) {
     return { ok: false, error: "Creator name is required before saving." };
@@ -82,6 +111,21 @@ export async function saveRateCard(
     };
   }
 
+  const starterPrice = parsePackagePrice(input.starterPrice);
+  const standardPrice = parsePackagePrice(input.standardPrice);
+  const premiumPrice = parsePackagePrice(input.premiumPrice);
+
+  if (
+    starterPrice === null ||
+    standardPrice === null ||
+    premiumPrice === null
+  ) {
+    return {
+      ok: false,
+      error: "Please enter prices for all packages before saving.",
+    };
+  }
+
   const values = {
     creator_name: creatorName,
     creator_handle: creatorHandle,
@@ -91,6 +135,15 @@ export async function saveRateCard(
     avg_views: Math.floor(parseNonNegativeNumber(input.avgViews)),
     engagement_rate: parseNonNegativeNumber(input.engagementRate),
     contact_email: contactEmail,
+    starter_name: starterName,
+    standard_name: standardName,
+    premium_name: premiumName,
+    starter_price: starterPrice,
+    standard_price: standardPrice,
+    premium_price: premiumPrice,
+    starter_description: trimString(input.starterDescription),
+    standard_description: trimString(input.standardDescription),
+    premium_description: trimString(input.premiumDescription),
   };
 
   const cardId = input.cardId?.trim();

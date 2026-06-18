@@ -5,26 +5,28 @@ import { createClient } from "@/lib/supabase/server";
 const steps = [
   {
     number: "01",
-    title: "Add your offers",
-    description: "List your content packages, deliverables, and starting rates.",
+    title: "Add your details",
+    description:
+      "Start with suggested rates based on your audience and platform.",
   },
   {
     number: "02",
-    title: "Make it yours",
-    description: "Choose the details that help brands understand your value.",
+    title: "Customize packages",
+    description:
+      "Adjust package names, prices, and deliverables before reviewing the final card.",
   },
   {
     number: "03",
-    title: "Share with brands",
-    description: "Send one polished page instead of another messy PDF.",
+    title: "Save and review",
+    description: "Review a watermarked preview now. Share and export options are coming next.",
   },
 ];
 
 const benefits = [
   "A clear, brand-friendly pricing page",
-  "Flexible packages and sponsorship rates",
-  "A polished link that is easy to share",
-  "Watermark-free export when you are ready",
+  "Custom package names, deliverables, and sponsorship rates",
+  "Saved cards you can return to and edit",
+  "Share and export options coming next",
 ];
 
 function SectionLabel({
@@ -122,8 +124,9 @@ export default async function Home() {
             Create creator pricing pages and sponsorship rate cards in minutes.
           </h1>
           <p className="mt-8 max-w-xl text-lg leading-8 text-zinc-400">
-            Stop guessing your rates. Build a clean page brands can understand
-            without fighting Canva chaos.
+            Stop guessing your rates. Start with suggested pricing, then
+            customize package names, prices, and deliverables without fighting
+            Canva chaos.
           </p>
           <div className="mt-10 flex flex-col items-start gap-4 sm:flex-row sm:items-center">
             <a
@@ -230,7 +233,8 @@ export default async function Home() {
               </p>
               <p>
                 RateKit turns scattered pricing notes into one focused,
-                professional page that makes the next step obvious.
+                professional page with package names, prices, and details you
+                control.
               </p>
             </div>
 
@@ -261,7 +265,7 @@ export default async function Home() {
       >
         <SectionLabel number="02">How it works</SectionLabel>
         <h2 className="mt-6 max-w-2xl text-3xl font-medium tracking-[-0.03em] text-stone-100 sm:text-5xl">
-          From rough rates to ready to share.
+          From suggested rates to ready to share.
         </h2>
         <div className="mt-14 grid border-l border-t border-zinc-800 md:grid-cols-3">
           {steps.map((step) => (
@@ -318,7 +322,8 @@ export default async function Home() {
           </h2>
           <p className="max-w-sm text-sm leading-6 text-zinc-500">
             Build the full page first. Export without a watermark when you are
-            happy with it.
+            happy with it. Future paid features may be handled by a third-party
+            payment provider or merchant of record.
           </p>
         </div>
         <div className="mt-14 grid border-l border-t border-zinc-800 lg:grid-cols-3">
@@ -341,7 +346,7 @@ export default async function Home() {
             </p>
             <ul className="mt-8 space-y-3 border-t border-zinc-800 pt-6 text-sm text-zinc-500">
               <li>Watermarked preview page</li>
-              <li>Shareable preview link</li>
+              <li>Preview link for review</li>
               <li>No download</li>
             </ul>
           </div>
@@ -360,11 +365,12 @@ export default async function Home() {
             <p className="mt-12 font-mono text-5xl">$4</p>
             <p className="mt-2 font-mono text-sm text-zinc-500">/ card</p>
             <p className="mt-6 max-w-sm leading-7 text-zinc-600">
-              Remove the watermark and download one finished rate card.
+              Remove the watermark and download one finished rate card. Export
+              is coming next.
             </p>
             <ul className="mt-8 space-y-3 border-t border-zinc-300 pt-6 text-sm text-zinc-600">
               <li>Watermark removed</li>
-              <li>Download-ready card</li>
+              <li>Download-ready card when export launches</li>
               <li>Pay only when you need it</li>
             </ul>
           </div>
@@ -380,7 +386,7 @@ export default async function Home() {
             <p className="mt-12 font-mono text-5xl text-stone-100">$14</p>
             <p className="mt-2 font-mono text-sm text-zinc-500">/ month</p>
             <p className="mt-6 max-w-sm leading-7 text-zinc-500">
-              Unlimited cards during your subscription.
+              Unlimited cards during your subscription. Planned for later.
             </p>
             <ul className="mt-8 space-y-3 border-t border-zinc-800 pt-6 text-sm text-zinc-500">
               <li>Unlimited watermark-free cards</li>

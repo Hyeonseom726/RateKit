@@ -5,21 +5,29 @@ const sections = [
   {
     title: "Overview",
     body: [
-      "RateKit helps creators create pricing pages and sponsorship rate cards. This policy explains the information RateKit may handle and how it may be used as the product evolves.",
+      "RateKit helps creators create pricing pages and sponsorship rate cards. This policy explains the information RateKit handles and how it may be used as the product evolves.",
     ],
   },
   {
     title: "Information we collect",
     body: [
-      "You may enter a creator name, creator handle, niche, platform, audience statistics, contact email, and sponsorship package information.",
-      "When you sign in with Google, RateKit may receive basic account information from your Google account, such as your name, email address, and profile image.",
+      "You may enter and save creator details, creator handles, niche, platform, audience metrics, package names, package prices, package descriptions, contact email, and related rate card information.",
+      "When you sign in with Google, RateKit may receive basic account information from your Google account, such as your email address, name, and profile information, depending on your Google settings.",
+      "Please do not enter sensitive personal information into rate card fields.",
     ],
   },
   {
     title: "How we use information",
     body: [
-      "We use information to provide and improve RateKit, generate your pricing pages and rate cards, respond to support requests, and understand how the product is used.",
+      "We use information to provide and improve RateKit, generate your pricing pages and rate cards, save your rate cards, respond to support requests, and understand how the product is used.",
       "RateKit does not sell user data.",
+    ],
+  },
+  {
+    title: "Saved rate cards",
+    body: [
+      "Saved rate card content is stored in RateKit's database so you can return to it later.",
+      "Authorized operators may access saved rate card content for service operation, support, debugging, security, abuse prevention, and legal compliance.",
     ],
   },
   {
@@ -31,7 +39,7 @@ const sections = [
   {
     title: "Payments",
     body: [
-      "If paid features are introduced, payment processing may be handled by a third-party payment provider. RateKit would not directly store full payment card details.",
+      "If paid features are introduced, payment information may be processed by a third-party payment provider or merchant of record. RateKit would not directly store full payment card details.",
     ],
   },
   {

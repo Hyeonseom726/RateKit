@@ -24,6 +24,37 @@ const platformMultipliers: Record<Platform, number> = {
   Newsletter: 2,
 };
 
+const platformPackageDescriptions: Record<
+  Platform,
+  { starter: string; standard: string; premium: string }
+> = {
+  Instagram: {
+    starter: "1 Story mention",
+    standard: "1 Reel + 2 Stories",
+    premium: "1 Reel + 3 Stories + usage rights",
+  },
+  YouTube: {
+    starter: "Short sponsor mention",
+    standard: "60-second integration",
+    premium: "Dedicated segment + pinned link",
+  },
+  TikTok: {
+    starter: "1 short-form mention",
+    standard: "1 sponsored video",
+    premium: "2 sponsored videos + usage rights",
+  },
+  X: {
+    starter: "1 sponsored post",
+    standard: "1 post + 1 repost",
+    premium: "Thread + pinned post window",
+  },
+  Newsletter: {
+    starter: "Sponsored mention",
+    standard: "Dedicated sponsor block",
+    premium: "Featured placement + follow-up mention",
+  },
+};
+
 const defaults = {
   creatorName: "Jamie Park",
   creatorHandle: "@jamiecreates",
@@ -35,6 +66,12 @@ const defaults = {
   contactEmail: "hello@jamie.com",
 };
 
+const defaultPackageNames = {
+  starter: "Starter",
+  standard: "Standard",
+  premium: "Premium",
+};
+
 function getParam(
   params: { get: (name: string) => string | null },
   name: string,
@@ -43,10 +80,25 @@ function getParam(
   return params.get(name) ?? fallback;
 }
 
+function getOptionalParam(
+  params: {
+    get: (name: string) => string | null;
+    has: (name: string) => boolean;
+  },
+  name: string,
+  fallback: string,
+) {
+  return params.has(name) ? (params.get(name) ?? "") : fallback;
+}
+
 function getPlatform(value: string): Platform {
   return platforms.includes(value as Platform)
     ? (value as Platform)
     : defaults.platform;
+}
+
+function getPackageMode(value: string | null) {
+  return value === "custom" ? "custom" : value === "suggested" ? "suggested" : "";
 }
 
 function parseNonNegativeNumber(value: string) {
@@ -86,6 +138,12 @@ function formatNumber(value: string) {
 
 function formatPrice(value: number) {
   return `$${value.toLocaleString("en-US")}`;
+}
+
+function formatPackagePrice(value: string) {
+  const price = value.trim();
+
+  return price ? formatPrice(Math.floor(parseNonNegativeNumber(price))) : "—";
 }
 
 function formatHandle(value: string) {
@@ -144,6 +202,67 @@ function PreviewPageContent() {
     parseNonNegativeNumber(avgViews),
     parseNonNegativeNumber(engagementRate),
   );
+  const suggestedDescriptions = platformPackageDescriptions[platform];
+  const starterPrice = getOptionalParam(
+    params,
+    "starterPrice",
+    String(rates.starter),
+  );
+  const standardPrice = getOptionalParam(
+    params,
+    "standardPrice",
+    String(rates.standard),
+  );
+  const premiumPrice = getOptionalParam(
+    params,
+    "premiumPrice",
+    String(rates.premium),
+  );
+  const starterName = getOptionalParam(
+    params,
+    "starterName",
+    defaultPackageNames.starter,
+  );
+  const standardName = getOptionalParam(
+    params,
+    "standardName",
+    defaultPackageNames.standard,
+  );
+  const premiumName = getOptionalParam(
+    params,
+    "premiumName",
+    defaultPackageNames.premium,
+  );
+  const starterDescription = getOptionalParam(
+    params,
+    "starterDescription",
+    suggestedDescriptions.starter,
+  );
+  const standardDescription = getOptionalParam(
+    params,
+    "standardDescription",
+    suggestedDescriptions.standard,
+  );
+  const premiumDescription = getOptionalParam(
+    params,
+    "premiumDescription",
+    suggestedDescriptions.premium,
+  );
+  const starterNameMode = getPackageMode(params.get("starterNameMode"));
+  const standardNameMode = getPackageMode(params.get("standardNameMode"));
+  const premiumNameMode = getPackageMode(params.get("premiumNameMode"));
+  const starterPriceMode = getPackageMode(params.get("starterPriceMode"));
+  const standardPriceMode = getPackageMode(params.get("standardPriceMode"));
+  const premiumPriceMode = getPackageMode(params.get("premiumPriceMode"));
+  const starterDescriptionMode = getPackageMode(
+    params.get("starterDescriptionMode"),
+  );
+  const standardDescriptionMode = getPackageMode(
+    params.get("standardDescriptionMode"),
+  );
+  const premiumDescriptionMode = getPackageMode(
+    params.get("premiumDescriptionMode"),
+  );
   const editParams = buildRateCardParams({
     ...(savedCardId ? { cardId: savedCardId } : {}),
     creatorName,
@@ -154,6 +273,24 @@ function PreviewPageContent() {
     avgViews: String(parseNonNegativeNumber(avgViews)),
     engagementRate: String(parseNonNegativeNumber(engagementRate)),
     contactEmail,
+    starterName,
+    standardName,
+    premiumName,
+    starterPrice,
+    standardPrice,
+    premiumPrice,
+    starterDescription,
+    standardDescription,
+    premiumDescription,
+    ...(starterNameMode ? { starterNameMode } : {}),
+    ...(standardNameMode ? { standardNameMode } : {}),
+    ...(premiumNameMode ? { premiumNameMode } : {}),
+    ...(starterPriceMode ? { starterPriceMode } : {}),
+    ...(standardPriceMode ? { standardPriceMode } : {}),
+    ...(premiumPriceMode ? { premiumPriceMode } : {}),
+    ...(starterDescriptionMode ? { starterDescriptionMode } : {}),
+    ...(standardDescriptionMode ? { standardDescriptionMode } : {}),
+    ...(premiumDescriptionMode ? { premiumDescriptionMode } : {}),
   });
 
   async function copyPreviewLink() {
@@ -187,6 +324,15 @@ function PreviewPageContent() {
       avgViews,
       engagementRate,
       contactEmail,
+      starterName,
+      standardName,
+      premiumName,
+      starterPrice,
+      standardPrice,
+      premiumPrice,
+      starterDescription,
+      standardDescription,
+      premiumDescription,
     });
 
     if (!result.ok) {
@@ -232,15 +378,26 @@ function PreviewPageContent() {
             </Link>
           </div>
         </div>
+        <div className="mb-8 border-b border-zinc-800 pb-6">
+          <p className="text-xs font-semibold uppercase tracking-[0.18em] text-amber-300">
+            Preview
+          </p>
+          <h1 className="mt-4 text-4xl font-medium tracking-[-0.04em] text-stone-100 sm:text-5xl">
+            Review your rate card
+          </h1>
+          <p className="mt-4 max-w-xl text-sm leading-6 text-zinc-500">
+            Check your final packages before saving or sharing.
+          </p>
+        </div>
         <div className="mb-6 flex flex-col gap-4">
-          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex flex-col gap-3">
             <Link
               href={`/generate?${editParams.toString()}`}
-              className="text-sm text-zinc-500 transition-colors hover:text-stone-200"
+              className="self-start text-sm text-zinc-500 transition-colors hover:text-stone-200"
             >
               ← Edit rate card
             </Link>
-            <div className="flex flex-col gap-3 sm:flex-row">
+            <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap">
               <button
                 type="button"
                 onClick={handleSaveRateCard}
@@ -320,19 +477,19 @@ function PreviewPageContent() {
             </p>
             <div className="mt-5 border-t border-zinc-300">
               <PackageRow
-                name="Starter"
-                description="Single sponsored placement"
-                price={rates.starter}
+                name={starterName || "Package"}
+                description={starterDescription || "Package details"}
+                price={starterPrice}
               />
               <PackageRow
-                name="Standard"
-                description="Core campaign collaboration"
-                price={rates.standard}
+                name={standardName || "Package"}
+                description={standardDescription || "Package details"}
+                price={standardPrice}
               />
               <PackageRow
-                name="Premium"
-                description="Expanded campaign package"
-                price={rates.premium}
+                name={premiumName || "Package"}
+                description={premiumDescription || "Package details"}
+                price={premiumPrice}
               />
             </div>
           </div>
@@ -401,16 +558,20 @@ function PackageRow({
 }: {
   name: string;
   description: string;
-  price: number;
+  price: string;
 }) {
   return (
     <div className="grid min-w-0 gap-3 border-b border-zinc-300 py-5 last:border-b-0 sm:grid-cols-[minmax(0,1fr)_minmax(0,12rem)] sm:items-end sm:gap-6">
       <div className="min-w-0">
-        <h2 className="font-semibold">{name}</h2>
-        <p className="mt-1 text-sm text-zinc-500">{description}</p>
+        <h2 className="min-w-0 [overflow-wrap:anywhere] break-words font-semibold">
+          {name}
+        </h2>
+        <p className="mt-1 min-w-0 [overflow-wrap:anywhere] break-words text-sm text-zinc-500">
+          {description}
+        </p>
       </div>
       <p className="min-w-0 [overflow-wrap:anywhere] font-mono text-lg font-semibold sm:text-right">
-        {formatPrice(price)}
+        {formatPackagePrice(price)}
       </p>
     </div>
   );
